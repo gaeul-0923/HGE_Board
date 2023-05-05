@@ -30,4 +30,14 @@ public class ApiClassListController {
     return new ResponseVO(ResponseCode.SUCCESS,classList);
   }
 
+  @PostMapping("/insertClass")
+  public ResponseVO insertClass(HttpServletRequest request, @RequestBody ClassVO classVO) throws Exception{
+    int result = classBoardListService.insertClass(classVO);
+    if (result > 0) {
+      return new ResponseVO(ResponseCode.SUCCESS, 1);
+    } else {
+      return new ResponseVO(ResponseCode.SUCCESS, 0);
+    }
+  }
+
 }

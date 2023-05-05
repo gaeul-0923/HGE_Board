@@ -5,19 +5,57 @@
   	<select id="selectClassList" resultType="com.classboard.view.classList.vo.ClassVO">
 			select class_seq
 					 , class_name
-					 , class_content
-					 , in_id
 					 , in_dtm
 			from classBoard
 			where delete_yn = 'N'
+		  order by in_dtm desc
   	</select>
 
 	<select id="selectClassDetail" resultType="com.classboard.view.classList.vo.ClassVO">
-		select class_name
-				 , class_content
-				 , in_id
-				 , in_dtm
-		from classBoard
-		where class_seq = #{class_seq}
+		select cb.class_name
+		     , cb.class_seq
+				 , cb.class_content
+				 , cb.in_id
+				 , cb.in_dtm
+				 , group_concat(c.word_seq) word_seq
+		from classBoard cb left outer join contain c on cb.class_seq = c.class_seq
+		where c.class_seq = #{class_seq}
+		group by c.class_seq
 	</select>
+
+	<select id="selectRelateClass" parameterType="com.classboard.view.classList.vo.ClassVO" resultType="com.classboard.view.classList.vo.RelateClassVO">
+		select cb.class_name
+				 , cb.class_seq
+				 , cb.class_content
+				 , cb.in_id
+				 , cb.in_dtm
+		from classBoard cb left join contain c on cb.class_seq = c.class_seq
+		where word_seq in
+			    <foreach collection="wordList" item="arr" open="(" close=")" separator=",">
+						#{arr}
+					</foreach>
+			and c.class_seq != #{class_seq}
+			and c.contain_cnt > 1
+		order by contain_cnt desc
+	</select>
+
+	<insert id="insertClass" parameterType="com.classboard.view.classList.vo.ClassVO">
+		insert into classBoard
+		(
+			  class_name
+			, class_content
+			, in_id
+			, in_dtm
+			, up_id
+			, up_dtm
+		) values
+		(
+			  #{class_name}
+		  , #{class_content}
+		  , #{in_id}
+		  , now()
+		  , #{up_id}
+		  , now()
+		)
+	</insert>
 </mapper>

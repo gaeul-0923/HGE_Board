@@ -6,6 +6,9 @@
 </head>
 <body>
 <h1>강의 리스트</h1>
+<div>
+  <a href="javascript:location.href='/classBoard/classAdd';">글쓰기</a>
+</div>
 <form id="classForm" method="post">
   <input type="hidden" id="page_num" th:name="page_num" th:value="${#strings.isEmpty(searchMap['page_num'])} ? '1' : ${searchMap['page_num']}" />
   <input type="hidden" id="class_seq" name="class_seq" />
@@ -30,7 +33,7 @@
     grid = new tui.Grid({
       el: document.getElementById('grid'),
       scrollX: true,
-      scrollY: false,
+      scrollY: true,
       rowHeight: '500',
       pageOptions: {
         useClient: true,
@@ -57,23 +60,11 @@
           }
         },
         {
-          header: '본문',
-          name: 'class_content',
-          width: 240,
-          align: 'left',
-        },
-        {
           header: '생성날짜',
           name: 'in_dtm',
           width: 200,
           align: 'center'
         },
-        {
-          header: '작성자ID',
-          name: 'in_id',
-          width: 160,
-          align: 'center'
-        }
       ]
     });
     search();

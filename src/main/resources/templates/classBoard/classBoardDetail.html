@@ -27,7 +27,16 @@
         <th>작성일자</th>
         <td th:text="${classDetail['in_dtm']}"></td>
       </tr>
+    <div th:if="${relateClass.size()>0}">
+      <th>연관강의</th>
+      <td>
+        <div th:each="list : ${relateClass}">
+          <p th:onclick="goDetail([[${list.class_seq}]])">[[${list.class_name}]]</p>
+        </div>
+      </td>
+    </div>
     </tbody>
+
   </table>
 </form>
 </body>
@@ -40,6 +49,13 @@
   $(document).ready(function () {
 
   });
+
+  const goDetail = (class_seq) => {
+    $("#class_seq").val(class_seq);
+    $("#classForm").attr("method","get");
+    $("#classForm").attr("action","/classBoard/classDetail");
+    $("#classForm").submit();
+  }
 
 </script>
 </html>

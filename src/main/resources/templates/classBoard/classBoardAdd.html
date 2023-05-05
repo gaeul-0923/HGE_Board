@@ -5,13 +5,13 @@
   <title>강의 추가 페이지</title>
 </head>
 <body>
-<form>
+<form id="classForm">
   <table>
     <tbody>
       <tr>
         <th scope="row">제목</th>
         <td colspan="8">
-          <input type="text" id="class_title" name="class_title"/>
+          <input type="text" id="class_name" name="class_name"/>
         </td>
       </tr>
       <tr>
@@ -20,9 +20,51 @@
           <textarea id="class_content" name="class_content"></textarea>
         </td>
       </tr>
+      <tr>
+        <th scope="row">작성자ID</th>
+        <td colspan="8">
+          <input type="text" id="in_id" name="in_id"/>
+        </td>
+      </tr>
     </tbody>
   </table>
-  <button type="button">저장</button>
+  <button type="button" onclick="btnClick()">저장</button>
 </form>
 </body>
+<script th:src="@{/js/jquery-3.6.0.min.js}"></script>
+<script th:src="@{/js/common.js}"></script>
+<script>
+  const btnClick = () => {
+    const jsonData = $("#classForm").json();
+
+    $.ajax({
+      type : "post",
+      async : false,
+      contentType: 'application/json',
+      url : "/api/classBoard/insertClass",
+      data : jsonData,
+      dataType : "JSON",
+      processData : false,
+      cache:false,
+      success : function(data) {
+        if (data.result === 'SUCCESS') {
+          if ((data.data === 1)) {
+            location.href = "/classBoard/classList";
+          } else {
+            alert('저장 실패');
+            return false;
+          }
+        } else {
+          alert('저장 실패');
+          return false;
+        }
+
+      },
+      error : function(xhr, status, err){
+        alert('저장시 에러발생');
+        return false;
+      }
+    });
+  }
+</script>
 </html>

@@ -13,8 +13,8 @@ mybatis:
 
 spring:
   datasource:
-    driverClassName: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/class_board?useSSL=false&serverTimezone=UTC&characterEncoding=UTF-8
+    driverClassName: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+    url: jdbc:log4jdbc:mysql://localhost:3306/class_board?useSSL=false&serverTimezone=UTC&characterEncoding=UTF-8
     username: root
     password: Asdf1234@
 
