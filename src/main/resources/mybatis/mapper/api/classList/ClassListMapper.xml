@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.classboard.view.classList.mapper.ClassListMapper">
+  	<select id="selectClassList" resultType="com.classboard.view.classList.vo.ClassVO">
+			select class_seq
+					 , class_name
+					 , class_content
+					 , in_id
+					 , in_dtm
+			from classBoard
+			where delete_yn = 'N'
+  	</select>
+
+	<select id="selectClassDetail" resultType="com.classboard.view.classList.vo.ClassVO">
+		select class_name
+				 , class_content
+				 , in_id
+				 , in_dtm
+		from classBoard
+		where class_seq = #{class_seq}
+	</select>
+</mapper>

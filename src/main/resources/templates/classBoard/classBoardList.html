@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>강의 리스트</title>
+</head>
+<body>
+<h1>강의 리스트</h1>
+<form id="classForm" method="post">
+  <input type="hidden" id="page_num" th:name="page_num" th:value="${#strings.isEmpty(searchMap['page_num'])} ? '1' : ${searchMap['page_num']}" />
+  <input type="hidden" id="class_seq" name="class_seq" />
+  <div id="grid"></div>
+</form>
+</body>
+
+<script th:src="@{/js/jquery-3.6.0.min.js}"></script>
+<script th:src="@{/js/common.js}"></script>
+<script th:src="@{/js/toast.datepicker.js}"></script>
+
+<!-- toast ui grid -->
+<script th:src="@{/lib/tui/tui-grid/dist/xlsx.full.min.js}"></script>
+<script th:src="@{/lib/tui/toastui-editor/toastui-editor-all.min.js}"></script>
+
+<script th:src="@{/lib/tui/tui-pagination/dist/tui-pagination.min.js}"></script>
+<script th:src="@{/lib/tui/tui-grid/dist/tui-grid.min.js}"></script>
+<script>
+  let grid;
+  $(document).ready(function () {
+    // Init Grid
+    grid = new tui.Grid({
+      el: document.getElementById('grid'),
+      scrollX: true,
+      scrollY: false,
+      rowHeight: '500',
+      pageOptions: {
+        useClient: true,
+        perPage: 15
+      },
+      columnOptions: {
+        resizable: true
+      },
+      columns: [
+        {
+          header: 'class_seq',
+          name: 'class_seq',
+          align: 'center',
+          hidden: true
+        },
+        {
+          header: '제목',
+          name: 'class_name',
+          minwidth: 180,
+          align: 'center',
+          formatter: function (props) {
+            const row_data = props.row;
+            return '<a href="javascript:goDetail(\'' + row_data.class_seq + '\');">' + row_data.class_name + '</a></span>';
+          }
+        },
+        {
+          header: '본문',
+          name: 'class_content',
+          width: 240,
+          align: 'left',
+        },
+        {
+          header: '생성날짜',
+          name: 'in_dtm',
+          width: 200,
+          align: 'center'
+        },
+        {
+          header: '작성자ID',
+          name: 'in_id',
+          width: 160,
+          align: 'center'
+        }
+      ]
+    });
+    search();
+  });
+
+  const search = () => {
+    var jsonData = $("#classForm").json();
+    $.ajax({
+      type : "post",
+      async : false,
+      contentType: 'application/json',
+      data : jsonData,
+      dataType : "JSON",
+      url : "/api/classBoard/selectClassBoardList",
+      success : function(data) {
+        if (data.result === 'SUCCESS') {
+          grid.resetData(data.data, {pageState: {page:parseInt($("#page_num").val()), totalCount:data.data.length, perPage: 15}});
+        } else {
+          alert('데이터조회시 에러발생1');
+          return false;
+        }
+
+      },
+      error : function(xhr, status, err){
+        alert('데이터조회시 에러발생2');
+        return false;
+      }
+    });
+  }
+
+  const goDetail = (class_seq) => {
+    $("#class_seq").val(class_seq);
+    $("#classForm").attr("method","get");
+    $("#classForm").attr("action","/classBoard/classDetail");
+    $("#classForm").submit();
+  }
+</script>
+</html>

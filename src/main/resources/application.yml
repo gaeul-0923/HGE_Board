@@ -1,0 +1,28 @@
+server:
+  port: 8080
+  servlet:
+    encoding:
+      force-response: true
+    session:
+      timeout: 120m
+
+mybatis:
+  type-aliases-package: com.classboard
+  mapper-locations: mybatis/mapper/**/*.xml
+
+
+spring:
+  datasource:
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/class_board?useSSL=false&serverTimezone=UTC&characterEncoding=UTF-8
+    username: root
+    password: Asdf1234@
+
+
+---
+logging:
+  config:
+    dir: data/logs/classBoard
+    file: classBoard
+    level: DEBUG
+
