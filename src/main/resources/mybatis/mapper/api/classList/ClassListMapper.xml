@@ -6,7 +6,7 @@
 			select class_seq
 					 , class_name
 					 , in_dtm
-			from classBoard
+			from tb_class_board
 			where delete_yn = 'N'
 		  order by in_dtm desc
   	</select>
@@ -18,7 +18,7 @@
 				 , cb.in_id
 				 , cb.in_dtm
 				 , group_concat(c.word_seq) word_seq
-		from classBoard cb left outer join contain c on cb.class_seq = c.class_seq
+		from tb_class_board cb left outer join tb_contain c on cb.class_seq = c.class_seq
 		where c.class_seq = #{class_seq}
 		group by c.class_seq
 	</select>
@@ -29,18 +29,19 @@
 				 , cb.class_content
 				 , cb.in_id
 				 , cb.in_dtm
-		from classBoard cb left join contain c on cb.class_seq = c.class_seq
+		from tb_class_board cb left join tb_contain c on cb.class_seq = c.class_seq
 		where word_seq in
 			    <foreach collection="wordList" item="arr" open="(" close=")" separator=",">
 						#{arr}
 					</foreach>
 			and c.class_seq != #{class_seq}
 			and c.contain_cnt > 1
-		order by contain_cnt desc
+		group by cb.class_seq, c.contain_cnt
+		order by c.contain_cnt desc
 	</select>
 
-	<insert id="insertClass" parameterType="com.classboard.view.classList.vo.ClassVO">
-		insert into classBoard
+	<insert id="insertClass" parameterType="com.classboard.view.classList.vo.ClassVO" keyProperty="class_seq" useGeneratedKeys="true">
+		insert into tb_class_board
 		(
 			  class_name
 			, class_content
@@ -56,6 +57,49 @@
 		  , now()
 		  , #{up_id}
 		  , now()
+		)
+	</insert>
+
+	<select id="selectExceptionWord" resultType="com.classboard.view.classList.vo.WordVO">
+		select exception_seq
+				 , exception_name
+		from tb_exception_word
+		where delete_yn = 'N'
+	</select>
+
+	<select id="selectWord" resultType="com.classboard.view.classList.vo.WordVO">
+		select word_seq
+		     , word_name
+		from tb_word
+	</select>
+
+	<insert id="insertWord" parameterType="java.util.Map">
+		insert into tb_word
+		(
+		 word_name
+		 , in_id
+		 , in_dtm
+		) values
+		<foreach collection="wordList" item="word" separator=",">
+			(#{word}, #{in_id}, NOW())
+		</foreach>
+	</insert>
+
+	<insert id="insertContain" parameterType="com.classboard.view.classList.vo.ContainVO">
+		insert into tb_contain
+		(
+		 		class_seq
+			, word_seq
+			, contain_cnt
+			, in_id
+			, in_dtm
+		) values
+		(
+			#{class_seq}
+		, #{word_seq}
+		, #{contain_cnt}
+		, #{in_id}
+		, now()
 		)
 	</insert>
 </mapper>

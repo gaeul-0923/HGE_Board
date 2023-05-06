@@ -35,14 +35,52 @@
 <script th:src="@{/js/common.js}"></script>
 <script>
   const btnClick = () => {
-    const jsonData = $("#classForm").json();
+    const content = $("#class_content").val();
+    var wordList = content.split(' '); //사용자가 입력한 내용에서 띄어쓰기를 기준으로 단어로 추출
 
+    //word 테이블에 먼저 insert -> 성공 시 tb_class_board 테이블에 등록
     $.ajax({
       type : "post",
       async : false,
       contentType: 'application/json',
+      url : "/api/classBoard/insertContainWord",
+      data : JSON.stringify({'wordList':wordList, 'in_id' : $("#in_id").val()}),
+      dataType : "JSON",
+      processData : false,
+      cache:false,
+      success : function(data) {
+        if (data.result === 'SUCCESS') {
+          if ((data.data === 1)) {
+            insertClass(wordList);
+          } else {
+            alert('저장 실패');
+            return false;
+          }
+        } else {
+          alert('저장 실패');
+          return false;
+        }
+      },
+      error : function(xhr, status, err){
+        alert('저장시 에러발생');
+        return false;
+      }
+    });
+  }
+
+  const insertClass = (wordList) => {
+    const formData = new FormData();
+    formData.append("class_name", $("#class_name").val());
+    formData.append("class_content", $("#class_content").val());
+    formData.append("in_id", $("#in_id").val());
+    formData.append("wordList", wordList);
+
+    $.ajax({
+      type : "post",
+      async : false,
+      contentType: false,
       url : "/api/classBoard/insertClass",
-      data : jsonData,
+      data : formData,
       dataType : "JSON",
       processData : false,
       cache:false,
@@ -65,6 +103,7 @@
         return false;
       }
     });
+
   }
 </script>
 </html>
