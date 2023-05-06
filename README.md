@@ -7,7 +7,7 @@
 
 ## 개발 환경
 
-- 개발 언어 : Java11, HTML, CSS, JavaScript, jQuery
+- 개발 언어 : Java11, Thymeleaf, JavaScript, jQuery
 - Framework/ Library : SpringBoot2.5.5, mybatis, toast ui
 - DBMS : mySQL
 - OS : macOS
