@@ -62,10 +62,13 @@ public class ClassListService {
    */
   public int insertClass(ClassVO classVO) throws Exception {
     try {
+      //강의를 저장하고 중복된 단어들은 tb_contain에 저장시킴
 
       classVO.setUp_id(classVO.getIn_id());
+      //강의 저장
       classBoardListMapper.insertClass(classVO);
 
+      //db에 있는 단어들을 배열로 가져온다.
       List<WordVO> existWordList = classBoardListMapper.selectWord();
       String[] existList = new String[existWordList.size()];
       for (int i = 0; i < existWordList.size(); i++) {
@@ -77,6 +80,7 @@ public class ClassListService {
       List<Integer> duplicateIndices = new ArrayList<>();
 
 
+      //사용자가 적은 단어들과 디비에서 가져온 단어들의 배열끼리 비교해서 중복된 단어와 위치값, 빈도를 추출한다.
       for (int i = 0; i < existList.length; i++) {
         for (int j = 0; j < classVO.getWordList().length; j++) {
           if (existList[i].equals(classVO.getWordList()[j])) {
@@ -87,6 +91,7 @@ public class ClassListService {
         }
       }
 
+      //중복된 빈도는 따로 배열에 저장
       List<Integer> contain_cnt = new ArrayList<>();
       for (Map.Entry<String, Integer> entry : duplicateElements.entrySet()) {
         String element = entry.getKey();
@@ -96,11 +101,13 @@ public class ClassListService {
 
       }
 
+      //중복된 단어의 word_seq를 찾는다.
       List<String> wordseqList = new ArrayList<>();
       for (int i = 0; i < duplicateIndices.size(); i++) {
         wordseqList.add(existWordList.get(duplicateIndices.get(i)).getWord_seq());
       }
 
+      //중복된 단어 저장
       for (int i = 0; i < wordseqList.size(); i++) {
         ContainVO containVO = new ContainVO();
         containVO.setClass_seq(classVO.getClass_seq());

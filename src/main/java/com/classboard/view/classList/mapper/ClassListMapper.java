@@ -64,5 +64,12 @@ public interface ClassListMapper {
 	 * @throws Exception
 	 */
 	public int insertWord(Map<String, Object> paramMap) throws Exception;
+
+	/**
+	 * 중복된 단어 저장
+	 * @param containVO
+	 * @return
+	 * @throws Exception
+	 */
 	public int insertContain(ContainVO containVO) throws Exception;
 }
